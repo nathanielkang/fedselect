@@ -66,12 +66,6 @@ python scripts/run_idea1_smoke.py --seed 42 --dp-eps 1.0 --out-dir results/idea1
 
 Ground-truth risk uses synthetic counterfactuals `Y(1)` that clients never observe.
 
-## Citation
-
-If you use this code, please cite the accompanying paper:
-
-> Nathaniel Kang. *Doubly Robust Federated Learning under Selective Labeling.* Machine Learning (under review).
-
 ## License
 
 MIT — see `LICENSE`.
