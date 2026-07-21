@@ -1,0 +1,38 @@
+# Precomputed outputs — never push (workflow §35)
+results/
+*.csv
+*.tsv
+*.parquet
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs / archives / OS
+*.log
+*.zip
+*.tar
+*.tar.gz
+.DS_Store
+Thumbs.db
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Local cloud deploy helpers (machine-specific paths; not part of the public mirror)
+scripts/gcp/
