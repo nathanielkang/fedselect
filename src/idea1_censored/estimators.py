@@ -110,9 +110,14 @@ def estimate_naive_fedavg(data: FederatedDataset) -> EstimateResult:
     """
     Label-blind FedAvg: each client fits on censored labels, server averages
     linear model weights, then evaluates mean prediction on the population support.
+
+    Uses the same rich ``_expand_design`` convention as FedProx / SCAFFOLD
+    (fit on expanded features; predict via averaged expanded-design head).
+    Chen pooled DR alone stays on ``_expand_design_simple``.
     """
     coefs: List[np.ndarray] = []
     intercepts: List[float] = []
+    weights: List[int] = []
     n_total = 0
     for c in data.clients:
         mask = c.observed
@@ -123,19 +128,15 @@ def estimate_naive_fedavg(data: FederatedDataset) -> EstimateResult:
         model = _fit_outcome_regressor(x, y)
         coefs.append(np.atleast_1d(model.coef_))
         intercepts.append(float(model.intercept_))
+        weights.append(int(mask.sum()))
         n_total += int(mask.sum())
 
     if not coefs:
         return EstimateResult(method="naive_fedavg", estimate=float("nan"), n_moments=0)
 
-    avg_coef = np.mean(np.vstack(coefs), axis=0)
-    avg_intercept = float(np.mean(intercepts))
+    avg_coef, avg_intercept = _weighted_coef_average(coefs, intercepts, weights)
     x_all = data.x_all if data.x_all.ndim > 1 else data.x_all.reshape(-1, 1)
-    # FedAvg clients fit on raw X only (no federated feature engineering).
-    if x_all.shape[1] == 1:
-        preds = x_all[:, 0] * avg_coef[0] + avg_intercept
-    else:
-        preds = x_all @ avg_coef[: x_all.shape[1]] + avg_intercept
+    preds = _predict_from_averaged_coef(avg_coef, avg_intercept, x_all)
     return EstimateResult(
         method="naive_fedavg",
         estimate=float(np.mean(preds)),
@@ -822,6 +823,41 @@ def estimate_federated_dr(
             interval=interval,
         )
     return result
+
+
+def estimate_federated_dr_no_loco(
+    data: FederatedDataset,
+    seed: int = 0,
+    propensity_clip: Optional[float] = None,
+    prox_rounds: Optional[int] = None,
+    prox_mu: float = DEFAULT_FEDERATED_DR_PROX_MU,
+    local_blend: Optional[float] = None,
+) -> EstimateResult:
+    """
+    FedSelect DR with LOCO disabled: shared outcome bridge via global FedAvg
+    (all clients included) instead of leave-one-client-out mu.
+
+    Isolates the LOCO ablation while keeping clip, truncation, and rich design
+    identical to ``estimate_federated_dr``.
+    """
+    clip, rounds, blend = _resolve_dr_hyperparams(
+        data, propensity_clip, prox_rounds, local_blend
+    )
+    result = _estimate_federated_dr_core(
+        data,
+        seed=seed,
+        propensity_clip=clip,
+        prox_rounds=rounds,
+        prox_mu=prox_mu,
+        local_blend=blend,
+        use_loco=False,
+    )
+    return EstimateResult(
+        method="federated_dr_no_loco",
+        estimate=result.estimate,
+        n_moments=result.n_moments,
+        partial_id=result.partial_id,
+    )
 
 
 def run_all_estimators(

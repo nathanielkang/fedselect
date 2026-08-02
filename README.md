@@ -1,4 +1,4 @@
-# FedSelect
+﻿# FedSelect
 
 **FedSelect** estimates population counterfactual risk under **decision-selective labeling** in federated learning: each client reveals outcomes only for the units it selects, selection policies differ across clients, and raw labels are never pooled.
 
@@ -41,9 +41,12 @@ python scripts/run_idea1_smoke.py --seed 42 --dp-eps 1.0 --out-dir results/idea1
 | Script | Role |
 |--------|------|
 | `scripts/run_idea1_smoke.py` | Fast local smoke / kill gate |
-| `scripts/run_idea1_v2_baselines.py` | V2 baseline matrix (FedSelect, UCL pooled adaptation, Fed-AIPW, …) |
+| `scripts/run_idea1_v2_baselines.py` | V2 baseline matrix (FedSelect, UCL pooled adaptation, Fed-AIPW, … |
 | `scripts/run_idea1_e5_matrix.py` | Larger multi-seed stress matrix |
 | `scripts/run_idea1_ablation.py` | Ablation grid |
+| `scripts/run_loco_ablation.py` | Leave-one-client-out bridge ablation |
+| `scripts/extract_table2_v2_gate.py` | Summarize V2 gate metrics from local run logs |
+| `scripts/run_v2_dp_fig5.py` | V2 differential-privacy figure helper (local outputs) |
 
 ## Layout
 
