@@ -4,6 +4,15 @@
 
 The estimator pairs a local selection (propensity) model with a shared outcome bridge built by leave-one-client-out aggregation of outcome coefficients, then aggregates doubly robust moments at the server. Optional Gaussian noise is applied only to that final aggregate. The coefficient exchange is not noised.
 
+## The picture
+
+Selection-blind averaging of a shared outcome model lands close to the doubly robust estimator. The remaining gap is the leave-one-client-out bridge.
+
+<p align="center">
+  <img src="figures/bias_ranking.png" alt="Mean absolute bias by method on a log scale" width="100%">
+</p>
+<p align="center"><em>Mean absolute bias across generators. Lower is better. Whiskers are the standard deviation across seeds.</em></p>
+
 ## Setup
 
 ```bash
