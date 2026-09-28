@@ -2,7 +2,7 @@
 
 **FedSelect** estimates population counterfactual risk under **decision-selective labeling** in federated learning: each client reveals outcomes only for the units it selects, selection policies differ across clients, and raw labels are never pooled.
 
-The estimator pairs a local selection (propensity) model with a shared outcome bridge built by leave-one-client-out aggregation of outcome coefficients, then aggregates doubly robust moments at the server (optional differential-privacy noise on the release).
+The estimator pairs a local selection (propensity) model with a shared outcome bridge built by leave-one-client-out aggregation of outcome coefficients, then aggregates doubly robust moments at the server. Optional Gaussian noise is applied only to that final aggregate. The coefficient exchange is not noised.
 
 ## Setup
 
@@ -72,10 +72,3 @@ Ground-truth risk uses synthetic counterfactuals `Y(1)` that clients never obser
 ## License
 
 MIT — see `LICENSE`.
-
-## Contact
-
-Nathaniel Kang  
-School of Computer Science and Engineering  
-Kyungpook National University  
-natekang@knu.ac.kr
